@@ -1,0 +1,19 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Ruby / tooling
+.bundle/
+/vendor/bundle/
+*.gem
+/coverage/
+/log/
+/tmp/
+
+# local only
+.env
+*.local
