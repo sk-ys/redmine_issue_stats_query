@@ -12,16 +12,16 @@ module RedmineIssueStatsQuery
     # (plugins load alphabetically), so ours runs after theirs.
     class ModelHook < Redmine::Hook::Listener
       def after_plugins_loaded(_context = {})
-        unless IssueQuery.include?(RedmineIssueStatsQuery::IssueQueryPatch)
-          IssueQuery.prepend RedmineIssueStatsQuery::IssueQueryPatch
+        unless IssueQuery.include?(RedmineIssueStatsQuery::Patches::IssueQueryPatch)
+          IssueQuery.prepend RedmineIssueStatsQuery::Patches::IssueQueryPatch
         end
 
-        unless QueriesHelper.include?(RedmineIssueStatsQuery::QueriesHelperPatch)
-          QueriesHelper.prepend RedmineIssueStatsQuery::QueriesHelperPatch
+        unless QueriesHelper.include?(RedmineIssueStatsQuery::Patches::QueriesHelperPatch)
+          QueriesHelper.prepend RedmineIssueStatsQuery::Patches::QueriesHelperPatch
         end
 
-        unless Issue.include?(RedmineIssueStatsQuery::IssuePatch)
-          Issue.include RedmineIssueStatsQuery::IssuePatch
+        unless Issue.include?(RedmineIssueStatsQuery::Patches::IssuePatch)
+          Issue.include RedmineIssueStatsQuery::Patches::IssuePatch
         end
       end
     end
