@@ -5,6 +5,8 @@ en:
   label_total_relations_count: Related issues count (total)
   label_visible_relations_count: Related issues count
   label_comments_count: Comments count
+  label_journals_count: Issue history count
+  label_property_changes_count: Property changes count
   label_attachments_count: Attachments count
   label_total_watchers_count: Watchers count (total)
   label_visible_watchers_count: Watchers count

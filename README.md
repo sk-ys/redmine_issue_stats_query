@@ -1,8 +1,8 @@
 # redmine_issue_stats_query
 
 Adds count-based columns, filters and sorting to the issue list:
-related issues, comments (public notes only), attachments, watchers,
-direct subtasks.
+related issues, comments (public notes only), issue history,
+property changes count, attachments, watchers, direct subtasks.
 
 ## Install
 Copy to `plugins/redmine_issue_stats_query`, then restart Redmine.

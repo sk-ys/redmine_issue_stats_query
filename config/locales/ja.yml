@@ -5,6 +5,8 @@ ja:
   label_total_relations_count: 関連チケット総数
   label_visible_relations_count: 関連チケット数
   label_comments_count: コメント数
+  label_journals_count: チケット変更履歴数
+  label_property_changes_count: プロパティ更新回数
   label_attachments_count: 添付ファイル数
   label_total_watchers_count: ウォッチャー総数
   label_visible_watchers_count: ウォッチャー数

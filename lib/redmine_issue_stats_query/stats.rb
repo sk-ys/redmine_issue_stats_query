@@ -20,6 +20,20 @@ module RedmineIssueStatsQuery
                         .select('container_id AS issue_id')
         [by_ids(rel, :container_id, ids)]
       },
+      # Journal entries (roughly issue update count), visibility-aware.
+      journals_count: lambda { |ids|
+        rel = Journal.visible.where(journalized_type: 'Issue', private_notes: false)
+                     .select("#{Journal.table_name}.journalized_id AS issue_id")
+        [by_ids(rel, :journalized_id, ids)]
+      },
+      # Journal entries excluding comment-only updates (must have details).
+      property_changes_count: lambda { |ids|
+        rel = Journal.visible.where(journalized_type: 'Issue')
+                     .joins(:details)
+                     .group("#{JournalDetail.table_name}.journal_id", "#{Journal.table_name}.journalized_id")
+                     .select("#{Journal.table_name}.journalized_id AS issue_id")
+        [by_ids(rel, :journalized_id, ids)]
+      },
       # Comments with a note. Private notes are excluded so counts never
       # reveal their existence.
       comments_count: lambda { |ids|
