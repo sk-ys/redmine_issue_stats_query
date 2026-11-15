@@ -151,7 +151,18 @@ module RedmineIssueStatsQuery
     # multiplies result rows.
     def self.join_sql(key)
       a = alias_for(key)
-      "LEFT JOIN (#{aggregate_sql(key)}) #{a} ON #{a}.issue_id = #{Issue.table_name}.id"
+      sql = "LEFT JOIN (#{aggregate_sql(key)}) #{a} ON #{a}.issue_id = #{Issue.table_name}.id"
+      hide_joins_from_alias_tracker(sql)
+    end
+
+    # ActiveRecord scans every string JOIN for "JOIN <table> ON". If it finds a
+    # table the query also joins through an association (e.g. projects), it
+    # renames its own join to "projects_issues", and conditions that refer to
+    # "projects." (Issue.visible, ...) fail with "no such column".
+    # The derived tables legitimately contain such JOINs, so put an SQL comment
+    # between the table name and ON, which is harmless to the database.
+    def self.hide_joins_from_alias_tracker(sql)
+      sql.gsub(' ON ', ' /**/ ON ')
     end
 
     # SQL expression of the count (0 when the issue has no rows).
