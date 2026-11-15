@@ -6,6 +6,7 @@ en:
   setting_allow_global_total_children_count: Show subtasks count (total) on global issue lists
   setting_allow_global_total_watchers_count: Show watchers count (total) on global issue lists
   text_global_total_stats_permission_ignored: When these are enabled, permission settings for each user role are ignored.
+  label_issue_stats: Issue stats
   label_total_relations_count: Related issues count (total)
   label_visible_relations_count: Related issues count
   label_comments_count: Comments count

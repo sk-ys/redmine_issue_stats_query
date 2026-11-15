@@ -4,6 +4,8 @@ Adds count-based columns, filters and sorting to the issue list:
 related issues, comments, issue history, property changes count, attachments,
 watchers, direct subtasks.
 
+On the issue filter selector, stat filters are grouped under `Issue stats`.
+
 ## Install
 Copy to `plugins/redmine_issue_stats_query`, then restart Redmine.
 No migrations required.

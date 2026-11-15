@@ -16,6 +16,10 @@ module RedmineIssueStatsQuery
           IssueQuery.prepend RedmineIssueStatsQuery::IssueQueryPatch
         end
 
+        unless QueriesHelper.include?(RedmineIssueStatsQuery::QueriesHelperPatch)
+          QueriesHelper.prepend RedmineIssueStatsQuery::QueriesHelperPatch
+        end
+
         unless Issue.include?(RedmineIssueStatsQuery::IssuePatch)
           Issue.include RedmineIssueStatsQuery::IssuePatch
         end
