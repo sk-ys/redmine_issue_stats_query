@@ -10,9 +10,18 @@ module RedmineIssueStatsQuery
   module Stats
     DEFINITIONS = {
       # Relations in either direction (an issue cannot relate to itself).
-      relations_count: lambda { |ids|
+      total_relations_count: lambda { |ids|
         [:issue_from_id, :issue_to_id].map do |col|
           by_ids(IssueRelation.select("#{col} AS issue_id"), col, ids)
+        end
+      },
+      # Relations in either direction, but only visible issues.
+      visible_relations_count: lambda { |ids|
+        visible = Issue.visible.select("#{Issue.table_name}.id")
+        [[:issue_from_id, :issue_to_id], [:issue_to_id, :issue_from_id]].map do |col, other|
+          rel = IssueRelation.where(other => visible)
+                             .select("#{IssueRelation.table_name}.#{col} AS issue_id")
+          by_ids(rel, col, ids)
         end
       },
       # Comments with a note. Private notes are excluded so counts never
@@ -29,8 +38,14 @@ module RedmineIssueStatsQuery
         [by_ids(rel, :container_id, ids)]
       },
       # Direct children only.
-      children_count: lambda { |ids|
+      total_children_count: lambda { |ids|
         rel = Issue.where.not(parent_id: nil).select('parent_id AS issue_id')
+        [by_ids(rel, :parent_id, ids)]
+      },
+      # Direct visible children only.
+      visible_children_count: lambda { |ids|
+        rel = Issue.visible.where.not(parent_id: nil)
+                   .select("#{Issue.table_name}.parent_id AS issue_id")
         [by_ids(rel, :parent_id, ids)]
       }
     }.freeze
