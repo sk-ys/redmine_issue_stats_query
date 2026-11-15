@@ -23,7 +23,11 @@ module RedmineIssueStatsQuery
       # Journal entries (roughly issue update count), visibility-aware.
       journals_count: lambda { |ids|
         visible_note_relations(ids).map do |rel|
-          rel.select("#{Journal.table_name}.journalized_id AS issue_id")
+          rel.where(
+            "#{Journal.table_name}.notes <> '' OR " \
+            "EXISTS (SELECT 1 FROM #{JournalDetail.table_name} " \
+            "WHERE #{JournalDetail.table_name}.journal_id = #{Journal.table_name}.id)"
+          ).select("#{Journal.table_name}.journalized_id AS issue_id")
         end
       },
       # Journal entries excluding comment-only updates (must have details).
