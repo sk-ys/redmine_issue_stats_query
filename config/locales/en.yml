@@ -3,5 +3,7 @@ en:
   label_visible_relations_count: Related issues count
   label_comments_count: Comments count
   label_attachments_count: Attachments count
+  label_total_watchers_count: Watchers count (total)
+  label_visible_watchers_count: Watchers count
   label_total_children_count: Subtasks count (total)
   label_visible_children_count: Subtasks count

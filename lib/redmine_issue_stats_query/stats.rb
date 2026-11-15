@@ -47,6 +47,22 @@ module RedmineIssueStatsQuery
         rel = Issue.visible.where.not(parent_id: nil)
                    .select("#{Issue.table_name}.parent_id AS issue_id")
         [by_ids(rel, :parent_id, ids)]
+      },
+      # Watchers (users/groups) regardless of current user's permissions.
+      total_watchers_count: lambda { |ids|
+        rel = Watcher.where(watchable_type: 'Issue')
+                     .select("#{Watcher.table_name}.watchable_id AS issue_id")
+        [by_ids(rel, :watchable_id, ids)]
+      },
+      # Watchers visible to current user. Without permission, users can only
+      # see themselves as watchers.
+      visible_watchers_count: lambda { |ids|
+        permission = Project.allowed_to_condition(User.current, :view_issue_watchers)
+        base = Issue.joins(:project, :watchers).select("#{Issue.table_name}.id AS issue_id")
+
+        [by_ids(base.where(permission), :id, ids),
+         by_ids(base.where("NOT (#{permission})")
+                    .where(watchers: { user_id: User.current.id }), :id, ids)]
       }
     }.freeze
 
