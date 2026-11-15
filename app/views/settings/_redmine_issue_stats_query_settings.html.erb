@@ -1,0 +1,18 @@
+<p>
+  <label><%= l(:setting_allow_global_total_relations_count) %></label>
+  <%= check_box_tag 'settings[allow_global_total_relations_count]', '1', @settings['allow_global_total_relations_count'] == '1' %>
+</p>
+
+<p>
+  <label><%= l(:setting_allow_global_total_children_count) %></label>
+  <%= check_box_tag 'settings[allow_global_total_children_count]', '1', @settings['allow_global_total_children_count'] == '1' %>
+</p>
+
+<p>
+  <label><%= l(:setting_allow_global_total_watchers_count) %></label>
+  <%= check_box_tag 'settings[allow_global_total_watchers_count]', '1', @settings['allow_global_total_watchers_count'] == '1' %>
+</p>
+
+<br>
+
+<em>⚠<%= l(:text_global_total_stats_permission_ignored) %></em>

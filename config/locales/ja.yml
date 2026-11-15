@@ -2,6 +2,10 @@ ja:
   permission_view_total_relations_count: 関連チケット総数の表示
   permission_view_total_children_count: 子チケット総数の表示
   permission_view_total_watchers_count: ウォッチャー総数の表示
+  setting_allow_global_total_relations_count: グローバルで関連チケット総数を表示
+  setting_allow_global_total_children_count: グローバルで子チケット総数を表示
+  setting_allow_global_total_watchers_count: グローバルでウォッチャー総数を表示
+  text_global_total_stats_permission_ignored: これらを有効にすると、各ユーザーロールに対する権限設定は無視されます。
   label_total_relations_count: 関連チケット総数
   label_visible_relations_count: 関連チケット数
   label_comments_count: コメント数

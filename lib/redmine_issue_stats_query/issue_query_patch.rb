@@ -67,11 +67,15 @@ module RedmineIssueStatsQuery
     def stat_keys
       @stat_keys ||= Stats.keys.select do |key|
         permission = Stats.permission_for(key)
-        
+
         # Show the stat when no permission is required for it.
         next true if permission.nil?
 
-        # Hide on global issue lists (no project context).
+        # If plugin settings allow global display for this total_* stat,
+        # show it regardless of project context and user permissions.
+        next true if Stats.global_enabled?(key)
+
+        # Hide permission-controlled stats on global issue lists.
         next false unless project
 
         User.current.allowed_to?(permission, project)

@@ -21,9 +21,16 @@ No migrations required.
 - `view_total_children_count`
 - `view_total_watchers_count`
 
-These `total_*_count` stats are disabled on global issue list queries
-(no project context). They are available only in project issue lists
-when the current user has the corresponding permission on that project.
+By default, these `total_*_count` stats are disabled on global issue
+list queries (no project context). You can enable each one in plugin
+settings:
+- `allow_global_total_relations_count`
+- `allow_global_total_children_count`
+- `allow_global_total_watchers_count`
+
+When enabled, user permission settings are ignored for that
+`total_*_count` stat, regardless of whether the issue list is global
+or project-scoped.
 
 `visible_*_count` stats are always available and use visibility rules
 defined by each stat.

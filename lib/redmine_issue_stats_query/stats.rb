@@ -14,6 +14,12 @@ module RedmineIssueStatsQuery
       total_watchers_count: :view_total_watchers_count
     }.freeze
 
+    GLOBAL_SETTINGS = {
+      total_relations_count: 'allow_global_total_relations_count',
+      total_children_count: 'allow_global_total_children_count',
+      total_watchers_count: 'allow_global_total_watchers_count'
+    }.freeze
+
     DEFINITIONS = {
       attachments_count: lambda { |ids|
         rel = Attachment.where(container_type: 'Issue')
@@ -95,6 +101,17 @@ module RedmineIssueStatsQuery
 
     def self.permission_for(key)
       PERMISSIONS[key]
+    end
+
+    def self.global_setting_key_for(key)
+      GLOBAL_SETTINGS[key]
+    end
+
+    def self.global_enabled?(key)
+      setting_key = global_setting_key_for(key)
+      return false if setting_key.nil?
+
+      Setting.plugin_redmine_issue_stats_query.fetch(setting_key, '0') == '1'
     end
 
     def self.by_ids(relation, column, ids)
