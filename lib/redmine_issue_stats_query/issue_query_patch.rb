@@ -11,16 +11,21 @@ module RedmineIssueStatsQuery
 
     def initialize_available_filters
       super
-      Stats.keys.each do |key|
+      stat_keys.each do |key|
         add_available_filter key.to_s,
                              type: :integer, name: l("label_#{key}")
       end
     end
 
+    def available_columns
+      @stat_available_columns ||=
+        super.select {|column| !column_stat?(column) || stat_keys.include?(column.name)}
+    end
+
     # JOIN the aggregates that are used as a filter.
     def base_scope
       scope = super
-      Stats.keys.each do |key|
+      stat_keys.each do |key|
         scope = scope.joins(Stats.join_sql(key)) if filters.key?(key.to_s)
       end
       scope
@@ -29,7 +34,7 @@ module RedmineIssueStatsQuery
     # JOIN the aggregates that are used for sorting.
     def joins_for_order_statement(order_options)
       joins = [super]
-      Stats.keys.each do |key|
+      stat_keys.each do |key|
         if order_options.to_s.include?(Stats.alias_for(key))
           joins << Stats.join_sql(key)
         end
@@ -40,7 +45,7 @@ module RedmineIssueStatsQuery
     # Load the counts of displayed columns for the whole page at once.
     def issues(options = {})
       issues = super
-      keys = Stats.keys.select { |key| has_column?(key) }
+      keys = stat_keys.select { |key| has_column?(key) }
       if keys.any? && issues.any?
         ids = issues.map(&:id)
         keys.each do |key|
@@ -58,6 +63,24 @@ module RedmineIssueStatsQuery
     end
 
     private
+
+    def stat_keys
+      @stat_keys ||= Stats.keys.select do |key|
+        permission = Stats.permission_for(key)
+        
+        # Show the stat when no permission is required for it.
+        next true if permission.nil?
+
+        # Hide on global issue lists (no project context).
+        next false unless project
+
+        User.current.allowed_to?(permission, project)
+      end
+    end
+
+    def column_stat?(column)
+      Stats.keys.include?(column.name)
+    end
 
     def stats_sql_op(operator, value)
       v = value.first.to_i

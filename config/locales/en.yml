@@ -1,4 +1,7 @@
 en:
+  permission_view_total_relations_count: View total related issues count
+  permission_view_total_children_count: View total subtasks count
+  permission_view_total_watchers_count: View total watchers count
   label_total_relations_count: Related issues count (total)
   label_visible_relations_count: Related issues count
   label_comments_count: Comments count

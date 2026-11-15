@@ -1,4 +1,7 @@
 ja:
+  permission_view_total_relations_count: 関連チケット総数の表示
+  permission_view_total_children_count: 子チケット総数の表示
+  permission_view_total_watchers_count: ウォッチャー総数の表示
   label_total_relations_count: 関連チケット総数
   label_visible_relations_count: 関連チケット数
   label_comments_count: コメント数

@@ -8,6 +8,12 @@ module RedmineIssueStatsQuery
   # Every relation must select the issue id as `issue_id`; one row = one count.
   # The relations are combined with UNION ALL and counted per issue_id.
   module Stats
+    PERMISSIONS = {
+      total_relations_count: :view_total_relations_count,
+      total_children_count: :view_total_children_count,
+      total_watchers_count: :view_total_watchers_count
+    }.freeze
+
     DEFINITIONS = {
       attachments_count: lambda { |ids|
         rel = Attachment.where(container_type: 'Issue')
@@ -69,6 +75,10 @@ module RedmineIssueStatsQuery
     KEYS = DEFINITIONS.keys.freeze
 
     def self.keys; KEYS; end
+
+    def self.permission_for(key)
+      PERMISSIONS[key]
+    end
 
     def self.by_ids(relation, column, ids)
       ids ? relation.where(column => ids) : relation
