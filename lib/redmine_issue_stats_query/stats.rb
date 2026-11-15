@@ -131,6 +131,7 @@ module RedmineIssueStatsQuery
 
       private_visible =
         Journal.where(journalized_type: 'Issue', private_notes: true)
+               .where.not(user_id: User.current.id) # own notes are in public_or_own
                .joins(:issue)
                .where(issues: { project_id: allowed_project_ids })
       private_visible = by_ids(private_visible, :journalized_id, ids)
