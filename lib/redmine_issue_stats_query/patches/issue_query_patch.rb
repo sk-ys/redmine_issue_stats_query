@@ -36,6 +36,9 @@ module RedmineIssueStatsQuery
       def joins_for_order_statement(order_options)
         joins = [super]
         stat_keys.each do |key|
+          # Already joined by base_scope. ... (duplicate alias error).
+          next if filters.key?(key.to_s)
+
           if order_options.to_s.include?(Stats.alias_for(key))
             joins << Stats.join_sql(key)
           end
