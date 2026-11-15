@@ -59,6 +59,9 @@ module RedmineIssueStatsQuery
 
       Stats.keys.each do |key|
         define_method("sql_for_#{key}_field") do |_field, operator, value|
+          # A saved query may contain a stat filter the current user is not
+          # allowed to use (no JOIN is added for it): ignore the filter.
+          next '1=1' unless stat_keys.include?(key)
           "(#{Stats.expr(key)} #{stats_sql_op(operator, value)})"
         end
       end
