@@ -1,8 +1,8 @@
 # redmine_issue_stats_query
 
 Adds count-based columns, filters and sorting to the issue list:
-related issues, comments (public notes only), issue history,
-property changes count, attachments, watchers, direct subtasks.
+related issues, comments, issue history, property changes count, attachments,
+watchers, direct subtasks.
 
 ## Install
 Copy to `plugins/redmine_issue_stats_query`, then restart Redmine.
@@ -27,6 +27,10 @@ when the current user has the corresponding permission on that project.
 
 `visible_*_count` stats are always available and use visibility rules
 defined by each stat.
+
+`comments_count` and `journals_count` are visibility-aware for private
+notes, so private notes are counted only when the current user is
+allowed to view them (or is the note author).
 
 ## Add a stat
 1. Add an entry to `DEFINITIONS` in `lib/redmine_issue_stats_query/stats.rb`

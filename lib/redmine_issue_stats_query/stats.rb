@@ -22,9 +22,9 @@ module RedmineIssueStatsQuery
       },
       # Journal entries (roughly issue update count), visibility-aware.
       journals_count: lambda { |ids|
-        rel = Journal.visible.where(journalized_type: 'Issue', private_notes: false)
-                     .select("#{Journal.table_name}.journalized_id AS issue_id")
-        [by_ids(rel, :journalized_id, ids)]
+        visible_note_relations(ids).map do |rel|
+          rel.select("#{Journal.table_name}.journalized_id AS issue_id")
+        end
       },
       # Journal entries excluding comment-only updates (must have details).
       property_changes_count: lambda { |ids|
@@ -34,13 +34,12 @@ module RedmineIssueStatsQuery
                      .select("#{Journal.table_name}.journalized_id AS issue_id")
         [by_ids(rel, :journalized_id, ids)]
       },
-      # Comments with a note. Private notes are excluded so counts never
-      # reveal their existence.
+      # Comments with a note, visibility-aware (private notes are counted only
+      # when the current user can view them).
       comments_count: lambda { |ids|
-        rel = Journal.where(journalized_type: 'Issue', private_notes: false)
-                     .where.not(notes: [nil, ''])
-                     .select('journalized_id AS issue_id')
-        [by_ids(rel, :journalized_id, ids)]
+        visible_note_relations(ids).map do |rel|
+          rel.where.not(notes: [nil, '']).select('journalized_id AS issue_id')
+        end
       },
       # Relations in either direction (an issue cannot relate to itself).
       total_relations_count: lambda { |ids|
@@ -96,6 +95,26 @@ module RedmineIssueStatsQuery
 
     def self.by_ids(relation, column, ids)
       ids ? relation.where(column => ids) : relation
+    end
+
+    # Journal note visibility, without joining projects in the generated SQL.
+    def self.visible_note_relations(ids)
+      public_or_own =
+        Journal.where(journalized_type: 'Issue')
+               .where(private_notes: false)
+               .or(Journal.where(journalized_type: 'Issue', user_id: User.current.id))
+      public_or_own = by_ids(public_or_own, :journalized_id, ids)
+
+      allowed_project_ids = Project.allowed_to(User.current, :view_private_notes).pluck(:id)
+      return [public_or_own] if allowed_project_ids.empty?
+
+      private_visible =
+        Journal.where(journalized_type: 'Issue', private_notes: true)
+               .joins(:issue)
+               .where(issues: { project_id: allowed_project_ids })
+      private_visible = by_ids(private_visible, :journalized_id, ids)
+
+      [public_or_own, private_visible]
     end
 
     # SELECT issue_id, cnt for one stat (optionally limited to some issues).
