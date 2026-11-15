@@ -3,6 +3,8 @@
 Adds count-based columns, filters and sorting to the issue list:
 related issues, comments, issue history, property changes count, attachments, watchers, direct subtasks.
 
+![alt text](docs/images/issue_filter.png)
+
 On the issue filter selector, stat filters are grouped under `Issue stats`.
 
 ## Install
