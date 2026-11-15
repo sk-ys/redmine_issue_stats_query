@@ -9,6 +9,19 @@ module RedmineIssueStatsQuery
   # The relations are combined with UNION ALL and counted per issue_id.
   module Stats
     DEFINITIONS = {
+      attachments_count: lambda { |ids|
+        rel = Attachment.where(container_type: 'Issue')
+                        .select('container_id AS issue_id')
+        [by_ids(rel, :container_id, ids)]
+      },
+      # Comments with a note. Private notes are excluded so counts never
+      # reveal their existence.
+      comments_count: lambda { |ids|
+        rel = Journal.where(journalized_type: 'Issue', private_notes: false)
+                     .where.not(notes: [nil, ''])
+                     .select('journalized_id AS issue_id')
+        [by_ids(rel, :journalized_id, ids)]
+      },
       # Relations in either direction (an issue cannot relate to itself).
       total_relations_count: lambda { |ids|
         [:issue_from_id, :issue_to_id].map do |col|
@@ -23,19 +36,6 @@ module RedmineIssueStatsQuery
                              .select("#{IssueRelation.table_name}.#{col} AS issue_id")
           by_ids(rel, col, ids)
         end
-      },
-      # Comments with a note. Private notes are excluded so counts never
-      # reveal their existence.
-      comments_count: lambda { |ids|
-        rel = Journal.where(journalized_type: 'Issue', private_notes: false)
-                     .where.not(notes: [nil, ''])
-                     .select('journalized_id AS issue_id')
-        [by_ids(rel, :journalized_id, ids)]
-      },
-      attachments_count: lambda { |ids|
-        rel = Attachment.where(container_type: 'Issue')
-                        .select('container_id AS issue_id')
-        [by_ids(rel, :container_id, ids)]
       },
       # Direct children only.
       total_children_count: lambda { |ids|
